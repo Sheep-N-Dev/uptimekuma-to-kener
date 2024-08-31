@@ -1,0 +1,22 @@
+{
+  "name": "uptimekuma-to-kener",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "dev": "cross-env NODE_ENV=development nodemon index",
+    "start": "cross-env NODE_ENV=production nodemon index"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@ptkdev/logger": "^1.8.0",
+    "axios": "^1.7.6",
+    "cron": "^3.1.7",
+    "dotenv": "^16.4.5",
+    "dotenv-expand": "^11.0.6",
+    "socket.io-client": "^4.7.5"
+  }
+}
