@@ -46,3 +46,9 @@ jobs:
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
+      #- name: Trigger Portainer Webhook
+      #  uses: fjogeleit/http-request-action@v1
+      #  with:
+      #    url: ${{ secrets.PORTAINER_WEBHOOK }}
+      #    method: 'POST'
+      #    preventFailureOnNoResponse: true
