@@ -34,13 +34,13 @@ const updateStatus = async (heart, tag, maxPing) => {
     const monitor_id = heart.monitorID || heart.monitor_id;
     let status = 'DOWN'
     try {
-        const monitor = getObjects(monitorsList,'id', monitor_id).find(item => item.type === 'push' || item.type === 'http' || item.type === 'port' || item.type === 'group' || item.type === 'docker');
+        const monitor = getObjects(monitorsList,'id', monitor_id).find(item => item.type === 'push' || item.type === 'http' || item.type === 'port' || item.type === 'group' || item.type === 'docker' || item.type === 'json-query');
 
         if ( monitor.active !== true ) return;
         if ( monitor.type === 'group' ) {
             let childs_status = {}
             for await (const child_id of monitor.childrenIDs) {
-                const child = getObjects(monitorsList,'id', child_id).find(item => item.type === 'push' || item.type === 'http' || item.type === 'port' || item.type === 'docker');
+                const child = getObjects(monitorsList,'id', child_id).find(item => item.type === 'push' || item.type === 'http' || item.type === 'port' || item.type === 'docker' || item.type === 'json-query');
 
                 if (child !== null && child !== undefined) {
                     const child_heart = lastHeartbeat[child_id]
@@ -77,7 +77,7 @@ const updateStatus = async (heart, tag, maxPing) => {
         //"timestampInSeconds": Math.round(Date.now() / 1000),
         "tag": tag
     }).then(function (response) {
-        const monitor = getObjects(monitorsList,'id', monitor_id).find(item => item.type === 'push' || item.type === 'http' || item.type === 'port' || item.type === 'group' || item.type === 'docker');
+        const monitor = getObjects(monitorsList,'id', monitor_id).find(item => item.type === 'push' || item.type === 'http' || item.type === 'port' || item.type === 'group' || item.type === 'docker' || item.type === 'json-query');
 
         logger.info(`${monitor.name} Updated status (maxPing: ${maxPing})`, log_text.kener);
     }).catch(function (error) {
@@ -121,10 +121,10 @@ socket.on("monitorList", async (monitors) => {
 
 socket.on("heartbeatList", async (monitor_id, data, overwrite = false) => {
     try {
-        const monitor = getObjects(monitorsList,'id', monitor_id).find(item => item.type === 'push' || item.type === 'http' || item.type === 'port' || item.type === 'group' || item.type === 'docker');
+        const monitor = getObjects(monitorsList,'id', monitor_id).find(item => item.type === 'push' || item.type === 'http' || item.type === 'port' || item.type === 'group' || item.type === 'docker' || item.type === 'json-query');
+        if (!monitor) return console.log(monitor_id);
         console.log()
         const heart = data[data.length-1];
-
         if (data.length === 0) return logger.info(`Received heartbeat for ${chalk.gray(monitor.id.toString().padStart(2, '0'))}|${chalk.magenta(monitor.name)} with ${chalk.bgCyan.black(' No data ')}`, log_text.hb);
         logger.info(`Received heartbeat for ${chalk.gray(monitor.id.toString().padStart(2, '0'))}|${chalk.magenta(monitor.name)} is ${((heart.status === 1) ? chalk.greenBright(log_text.up) : chalk.redBright(log_text.down))}${((lastHeartbeat[monitor_id]) ? " " + ((lastHeartbeat[monitor_id].status === 1) ? chalk.grey(log_text.up) : chalk.grey(log_text.down)) : '')}`, log_text.hb);
         lastHeartbeat[monitor_id] = heart;
@@ -149,11 +149,11 @@ socket.on("heartbeatList", async (monitor_id, data, overwrite = false) => {
 
 socket.on("heartbeat", (data) => {
     try {
-        const monitor = getObjects(monitorsList,'id', data.monitorID).find(item => item.type === 'push' || item.type === 'http' || item.type === 'port' || item.type === 'group' || item.type === 'docker');
+        const monitor = getObjects(monitorsList,'id', data.monitorID).find(item => item.type === 'push' || item.type === 'http' || item.type === 'port' || item.type === 'group' || item.type === 'docker' || item.type === 'json-query');
 
         lastHeartbeat[data.monitorID] = data;
         lastHeartbeat[data.monitorID]['timestamp'] = Date.now();
-
+        if (!monitor) return false;
         logger.info(`Receive for monitor #${data.monitorID} (${monitor.name})`, "Heartbeat");
 
         const tag = monitor.tags.find(item => item.name === 'kener');
@@ -169,8 +169,8 @@ socket.on("uptime", (monitorID, dd, gg) => {
     if (lastHeartbeat[monitorID] === undefined || lastHeartbeat[monitorID] === null) return;
     lastHeartbeat[monitorID]['timestamp'] = Date.now();
     try {
-        const monitor = getObjects(monitorsList,'id', monitorID).find(item => item.type === 'push' || item.type === 'http' || item.type === 'port' || item.type === 'group' || item.type === 'docker');
-
+        const monitor = getObjects(monitorsList,'id', monitorID).find(item => item.type === 'push' || item.type === 'http' || item.type === 'port' || item.type === 'group' || item.type === 'docker' || item.type === 'json-query');
+        if (!monitor) return false;
         logger.info(`Receive for monitor #${monitorID} (${monitor.name})`, "Uptime");
 
         const lh = lastHeartbeat[monitorID]
@@ -195,7 +195,7 @@ const job = CronJob.from({
         for (const mon in lastHeartbeat) {
             const heartbeat = lastHeartbeat[mon];
 
-            const monitor = getObjects(monitorsList,'id', heartbeat.monitorID).find(item => item.type === 'push' || item.type === 'http' || item.type === 'port' || item.type === 'group' || item.type === 'docker');
+            const monitor = getObjects(monitorsList,'id', heartbeat.monitorID).find(item => item.type === 'push' || item.type === 'http' || item.type === 'port' || item.type === 'group' || item.type === 'docker' || item.type === 'json-query');
             if (monitor !== null && monitor !== undefined) {
                 const tag = monitor.tags.find(item => item.name === 'kener')
                 const maxPing = monitor.tags.find(item => item.name === 'max_ping');

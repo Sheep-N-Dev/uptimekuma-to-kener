@@ -19,5 +19,8 @@
     "dotenv": "^16.4.5",
     "dotenv-expand": "^11.0.6",
     "socket.io-client": "^4.7.5"
+  },
+  "devDependencies": {
+    "cross-env": "^7.0.3"
   }
 }

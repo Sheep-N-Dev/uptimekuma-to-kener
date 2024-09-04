@@ -1,7 +1,9 @@
 {
   "kener"    : "Kener      ",
   "kuma"     : "UptimeKuma ",
+  "hb"       : "Heartbeat  ",
   "up"       : "🠝",
+  "down"     : "🠟",
   "push"      : "push   ",
   "http"      : "http   ",
   "port"      : "port   ",
